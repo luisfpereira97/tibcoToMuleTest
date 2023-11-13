@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd       http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd       http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd       http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd       http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd       http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+ <flow doc:id="a69c2c7b-820f-11ee-be24-70a8d32dad24" name="Process_Definition_Copy_2">
+  <http:listener config-ref="HTTPConnection" doc:id="a69c2c7c-820f-11ee-96f1-70a8d32dad24" doc:name="HTTP Listener" path="/teste"/>
+  <ee:transform doc:id="a69c2c7d-820f-11ee-9fd6-70a8d32dad24" doc:name="">
+   <ee:message/>
+   <ee:variables>
+    <ee:set-variable variableName="PhoneNumber">
+     <![CDATA[%dw 2.0
+output application/java
+---
+$Start/root/PhoneNumber]]>
+    </ee:set-variable>
+   </ee:variables>
+  </ee:transform>
+  <db:select config-ref="JDBCConnection" doc:name="Select" maxRows="10" queryTimeout="10">
+   <db:sql>
+    <![CDATA[Select * From TestDB]]>
+   </db:sql>
+   <db:input-parameters>
+    <![CDATA[#[{}]]]>
+   </db:input-parameters>
+  </db:select>
+  <choice>
+   <when expression="$Validate-if-client-exists/resultSet/phonenumber=$Start/root/PhoneNumber">
+    <ee:transform doc:id="a69c2c7e-820f-11ee-a3df-70a8d32dad24" doc:name="">
+     <ee:message/>
+     <ee:variables>
+      <ee:set-variable variableName="message">
+       <![CDATA[%dw 2.0
+output application/java
+---
+"Customer already had the service"]]>
+      </ee:set-variable>
+     </ee:variables>
+    </ee:transform>
+   </when>
+   <otherwise>
+    <db:insert config-ref="JDBCConnection" doc:name="Insert" maxRows="10" queryTimeout="10">
+     <db:sql>
+      <![CDATA[Insert into testDB]]>
+     </db:sql>
+     <db:input-parameters>
+      <![CDATA[#[{}]]]>
+     </db:input-parameters>
+    </db:insert>
+    <file:write doc:id="a69c2c7f-820f-11ee-8bae-70a8d32dad24" doc:name="Write" path='"Test.txt"'>
+     <file:content/>
+    </file:write>
+   </otherwise>
+  </choice>
+  <set-variable doc:id="a69c2c80-820f-11ee-bbf1-70a8d32dad24" doc:name="ResultAssign" value="getValue" variableName="Result"/>
+  <choice>
+   <when expression="$Validate-if-client-exists/resultSet/NIF=$Start/root/NIF">
+    <ee:transform doc:id="a69c2c81-820f-11ee-ae7c-70a8d32dad24" doc:name="">
+     <ee:message/>
+     <ee:variables/>
+    </ee:transform>
+   </when>
+   <otherwise>
+    <db:insert config-ref="JDBCConnection" doc:name="Insert" maxRows="10" queryTimeout="10">
+     <db:sql>
+      <![CDATA[Insert into testDB]]>
+     </db:sql>
+     <db:input-parameters>
+      <![CDATA[#[{}]]]>
+     </db:input-parameters>
+    </db:insert>
+    <file:write doc:id="a69c2c82-820f-11ee-b1b3-70a8d32dad24" doc:name="Write" path='"Test.txt"'>
+     <file:content/>
+    </file:write>
+   </otherwise>
+  </choice>
+  <db:select config-ref="JDBCConnection" doc:name="Select" maxRows="10" queryTimeout="10">
+   <db:sql>
+    <![CDATA[Select * From TestDB]]>
+   </db:sql>
+   <db:input-parameters>
+    <![CDATA[#[{}]]]>
+   </db:input-parameters>
+  </db:select>
+ </flow>
+</mule>

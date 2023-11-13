@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd       http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd       http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd       http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd       http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd       http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+ <flow doc:id="a69c0570-820f-11ee-8a99-70a8d32dad24" name="Process_Definition_0">
+  <ee:transform doc:id="a69c0571-820f-11ee-80a0-70a8d32dad24" doc:name="">
+   <ee:message/>
+   <ee:variables>
+    <ee:set-variable variableName="JSON_to_Parse">
+     <![CDATA[%dw 2.0
+output application/java
+---
+'{"param11": "test11", "param12": "teste12"}']]>
+    </ee:set-variable>
+   </ee:variables>
+  </ee:transform>
+  <ee:transform doc:id="a69c0572-820f-11ee-9bc9-70a8d32dad24" doc:name="Parse JSON">
+   <ee:message>
+    <ee:set-payload>
+     <![CDATA[%dw 2.0
+output application/xml
+---
+payload
+]]>
+    </ee:set-payload>
+   </ee:message>
+  </ee:transform>
+  <ee:transform doc:id="a69c0573-820f-11ee-af3e-70a8d32dad24" doc:name="Render JSON">
+   <ee:message>
+    <ee:set-payload>
+     <![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]>
+    </ee:set-payload>
+   </ee:message>
+  </ee:transform>
+ </flow>
+</mule>
